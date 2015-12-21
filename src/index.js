@@ -1,10 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import { render } from 'react-dom';
-import { combineReducers, createStore } from 'redux';
+import { combineReducers, createStore, bindActionCreators } from 'redux';
 import { connect, Provider } from 'react-redux';
 import { createAction, handleActions } from 'redux-actions';
 import { IndexRoute, Route, Redirect, Link } from 'react-router';
-import { reduxReactRouter, routerStateReducer, ReduxRouter } from 'redux-router';
+import {
+  reduxReactRouter,
+  routerStateReducer,
+  ReduxRouter,
+  pushState
+} from 'redux-router';
 import createHistory from 'history/lib/createHashHistory';
 
 const INCR_COUNTER = 'INCR_COUNTER';
@@ -80,7 +85,23 @@ class Increment extends Component {
   }
 }
 
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+    pushState: bindActionCreators(pushState, dispatch)
+  };
+}
+
+@connect(null, mapDispatchToProps)
 class Decrement extends Component {
+  componentDidMount() {
+    const { pushState } = this.props;
+
+    setTimeout(() => {
+      pushState(null, '/incr');
+    }, 1000)
+  }
+
   render() {
     const { dispatch } = this.props;
     return (
