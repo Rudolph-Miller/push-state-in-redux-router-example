@@ -42,16 +42,17 @@ class App extends Component {
 
 @connect()
 class CounterButton extends Component {
-  static propTypes = {
-    type: PropTypes.oneOf(['incr', 'decr']).isRequired
+  static contextTypes = {
+    location: React.PropTypes.object.isRequired
   }
 
   render() {
     const { dispatch } = this.props;
+
     return (
       <button
         onClick={() => {
-          if(this.props.type === 'incr') {
+          if(this.context.location.pathname === '/incr') {
             dispatch(incrCounter());
           } else {
             dispatch(decrCounter());
@@ -67,7 +68,7 @@ class Increment extends Component {
   render() {
     return (
       <div>
-        <CounterButton type='incr'>INCREMENT</CounterButton>
+        <CounterButton>INCREMENT</CounterButton>
         <Link to='/decr'>
           TO DECREMENT
         </Link>
@@ -81,7 +82,7 @@ class Decrement extends Component {
     const { dispatch } = this.props;
     return (
       <div>
-        <CounterButton type='decr'>DECREMENT</CounterButton>
+        <CounterButton>DECREMENT</CounterButton>
         <Link to='/'>
           TO INCREMENT
         </Link>
