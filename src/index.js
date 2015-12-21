@@ -3,7 +3,9 @@ import { render } from 'react-dom';
 import { combineReducers, createStore } from 'redux';
 import { connect, Provider } from 'react-redux';
 import { createAction, handleActions } from 'redux-actions';
-import { Router, IndexRoute, Route, Redirect, Link } from 'react-router';
+import { IndexRoute, Route, Redirect, Link } from 'react-router';
+import { reduxReactRouter, routerStateReducer, ReduxRouter } from 'redux-router';
+import createHistory from 'history/lib/createHashHistory';
 
 const INCR_COUNTER = 'INCR_COUNTER';
 const incrCounter = createAction(INCR_COUNTER);
@@ -20,6 +22,7 @@ const handleCounter = handleActions({
 }, 0);
 
 const reducer = combineReducers({
+  router: routerStateReducer,
   counter: handleCounter
 });
 
@@ -40,19 +43,19 @@ class App extends Component {
   }
 }
 
-@connect()
-class CounterButton extends Component {
-  static contextTypes = {
-    location: React.PropTypes.object.isRequired
+@connect(state => {
+  return {
+    location: state.router.location
   }
-
+})
+class CounterButton extends Component {
   render() {
     const { dispatch } = this.props;
 
     return (
       <button
         onClick={() => {
-          if(this.context.location.pathname === '/incr') {
+          if(this.props.location.pathname === '/incr') {
             dispatch(incrCounter());
           } else {
             dispatch(decrCounter());
@@ -101,15 +104,13 @@ const routes = (
   </Route>
 );
 
-const store = createStore(reducer);
+const store = reduxReactRouter({routes, createHistory})(createStore)(reducer);
 
 class Root extends Component {
   render() {
     return (
       <Provider store={store}>
-        <Router>
-          {routes}
-        </Router>
+        <ReduxRouter />
       </Provider>
     );
   }
