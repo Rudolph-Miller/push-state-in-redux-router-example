@@ -1,4 +1,4 @@
-# setState in Redux Router Example
+# pushState in Redux Router Example
 
 # Usage
 
